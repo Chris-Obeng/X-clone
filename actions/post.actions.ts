@@ -50,6 +50,26 @@ export async function getPostsAction() {
   }
 }
 
+export async function getUserPostsAction(userId: string) {
+  try {
+    const posts = await prisma.post.findMany({
+      where: { userId },
+      include: {
+        user: true,
+        media: true,
+        replies: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    return posts;
+  } catch (error) {
+    console.error("Error fetching user posts:", error);
+    return [];
+  }
+}
+
 export async function getPostByIdAction(postId: string) {
   try {
     const post = await prisma.post.findUnique({
@@ -92,10 +112,39 @@ export async function deletePostAction(postId: string) {
     });
 
     revalidatePath("/home");
+    revalidatePath("/profile");
     return { success: true };
   } catch (error) {
     console.error("Error deleting post:", error);
     return { success: false, error: "Failed to delete post" };
+  }
+}
+
+export async function searchPostsAction(query: string) {
+  try {
+    if (!query) return [];
+
+    const posts = await prisma.post.findMany({
+      where: {
+        OR: [
+          { content: { contains: query, mode: "insensitive" } },
+          { user: { username: { contains: query, mode: "insensitive" } } },
+          { user: { name: { contains: query, mode: "insensitive" } } },
+        ],
+      },
+      include: {
+        user: true,
+        media: true,
+        replies: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    return posts;
+  } catch (error) {
+    console.error("Error searching posts:", error);
+    return [];
   }
 }
 

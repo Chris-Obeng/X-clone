@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Show, UserButton } from "@clerk/nextjs";
+import { useUser, Show, UserButton } from "@clerk/nextjs";
 import { usePostDialog } from "@/hooks/use-post-dialog";
 
 type IconComponent = React.ComponentType<{ className?: string }>;
@@ -34,7 +34,7 @@ const sidebarLinks = [
   {
     name: "Home",
     icon: Home,
-    href: "/",
+    href: "/home",
   },
   {
     name: "Explore",
@@ -64,7 +64,7 @@ const sidebarLinks = [
   {
     name: "Premium",
     icon: fa(faXTwitter),
-    href: "/Premium",
+    href: "/premium",
   },
   {
     name: "Profile",
@@ -80,6 +80,7 @@ const sidebarLinks = [
 
 const LeftSideBar = () => {
   const { onOpen } = usePostDialog();
+  const { user, isLoaded } = useUser();
 
   return (
     <aside className="fixed top-0 left-0 h-screen w-[19.25rem] bg-black text-white">
@@ -116,26 +117,28 @@ const LeftSideBar = () => {
           Post
         </Button>
 
-        <div className="flex hover:bg-gray-200/14 rounded-full mt-12 ml-13 p-2 gap-x-2 cursor-pointer w-60">
-          <div className="rounded-full p-4.5 size-6 font-mono cursor-pointer flex items-center text-lg justify-center">
-            <Show when={"signed-in"}>
-              <UserButton
-                appearance={{
-                  elements: { avatarBox: { width: 40, height: 40 } },
-                }} />
-            </Show>
+        <Link 
+          href="/profile"
+          className="flex hover:bg-gray-200/14 rounded-full mt-auto mb-4 ml-13 p-3 gap-x-2 cursor-pointer w-60 items-center"
+        >
+          <div className="rounded-full size-10 font-mono cursor-pointer flex items-center text-lg justify-center overflow-hidden shrink-0">
+            {isLoaded && user ? (
+              <img src={user.imageUrl} alt={user.fullName || ""} className="w-full h-full object-cover" />
+            ) : (
+              <User size={24} />
+            )}
           </div>
-          <div className="flex flex-1 justify-between ">
-            <div className="flex flex-col justify-start ">
-              <p className="font-semibold text-sm">Chris</p>
-              <p className="text-sm font-light text-gray-200/30">@Obengch</p>
+          <div className="flex flex-1 justify-between min-w-0">
+            <div className="flex flex-col justify-start overflow-hidden">
+              <p className="font-semibold text-sm truncate">{user?.fullName || user?.username || "User"}</p>
+              <p className="text-sm font-light text-gray-200/30 truncate">@{user?.username || user?.firstName?.toLowerCase() || "user"}</p>
             </div>
 
             <div className="flex items-center">
-              <Ellipsis className="cursor-pointer" />
+              <Ellipsis size={18} className="cursor-pointer text-gray-500" />
             </div>
           </div>
-        </div>
+        </Link>
       </div>
     </aside>
   );

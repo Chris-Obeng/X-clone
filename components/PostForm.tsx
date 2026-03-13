@@ -85,8 +85,10 @@ const PostForm = ({ onSuccess, placeholder = "What is happening?", showClose, on
   const [mediaFiles, setMediaFiles] = useState<MediaItem[]>([]);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const isExpanded = focused || text.length > 0 || mediaFiles.length > 0;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const emojiBtnRef = useRef<HTMLButtonElement>(null);
+  const emojiPickerRef = useRef<HTMLDivElement>(null);
   const MAX = 280;
 
   const { startUpload, isUploading } = useUploadThing("mediaUploader", {
@@ -122,6 +124,12 @@ const PostForm = ({ onSuccess, placeholder = "What is happening?", showClose, on
       onSuccess?.();
     },
   });
+
+  useEffect(() => {
+    if (showEmojiPicker && emojiPickerRef.current) {
+      emojiPickerRef.current.focus();
+    }
+  }, [showEmojiPicker]);
 
   const handlePost = async () => {
     if (!user || isUploading || mutation.isPending) return;
@@ -189,12 +197,14 @@ const PostForm = ({ onSuccess, placeholder = "What is happening?", showClose, on
             </div>
 
             <div className="flex flex-col flex-1 min-w-0">
-            <button className="self-start flex items-center gap-1 px-3 py-[3px] mb-2 rounded-full border border-[#2f3336] bg-transparent text-[#1d9bf0] text-[13px] font-bold cursor-pointer hover:bg-[#1d9bf0]/10 transition-colors">
-                Everyone
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
-                    <g><path d="M3.543 8.96l1.414-1.42L12 14.59l7.043-7.05 1.414 1.42L12 17.41 3.543 8.96z" /></g>
-                </svg>
-            </button>
+            {isExpanded && (
+                <button className="self-start flex items-center gap-1 px-3 py-[3px] mb-2 rounded-full border border-[#2f3336] bg-transparent text-[#1d9bf0] text-[13px] font-bold cursor-pointer hover:bg-[#1d9bf0]/10 transition-colors">
+                    Everyone
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                        <g><path d="M3.543 8.96l1.414-1.42L12 14.59l7.043-7.05 1.414 1.42L12 17.41 3.543 8.96z" /></g>
+                    </svg>
+                </button>
+            )}
 
             <textarea
                 ref={textareaRef}
@@ -202,8 +212,8 @@ const PostForm = ({ onSuccess, placeholder = "What is happening?", showClose, on
                 onChange={(e) => { setText(e.target.value); autoResize(e.target); }}
                 onFocus={() => setFocused(true)}
                 placeholder={placeholder}
-                rows={focused ? 3 : 1}
-                className="w-full resize-none border-none outline-none bg-transparent text-[#e7e9ea] placeholder:text-[#71767b] placeholder:text-xl leading-7 py-2 font-[inherit] overflow-y-hidden box-border focus:outline-none min-h-[120px]"
+                rows={isExpanded ? 3 : 1}
+                className={`w-full resize-none border-none outline-none bg-transparent text-[#e7e9ea] placeholder:text-[#71767b] placeholder:text-xl leading-7 py-2 font-[inherit] overflow-y-hidden box-border focus:outline-none ${isExpanded ? "min-h-[120px]" : "min-h-[40px]"}`}
             />
 
             <MediaGrid 
@@ -212,12 +222,14 @@ const PostForm = ({ onSuccess, placeholder = "What is happening?", showClose, on
                 editable={true} 
             />
 
-            <div className="flex items-center gap-1 py-3 text-[#1d9bf0] font-bold text-[14px]">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                    <g><path d="M12 1.75C6.34 1.75 1.75 6.34 1.75 12S6.34 22.25 12 22.25 22.25 17.66 22.25 12 17.66 1.75 12 1.75zm0 18.5c-3.584 0-6.5-2.916-6.5-6.5s2.916-6.5 6.5-6.5 6.5 2.916 6.5 6.5-2.916 6.5-6.5 6.5zM12.5 12V7h-1v6l4.25 2.125.5-.875L12.5 12z"/></g>
-                </svg>
-                <span>Everyone can reply</span>
-            </div>
+            {isExpanded && (
+                <div className="flex items-center gap-1 py-3 text-[#1d9bf0] font-bold text-[14px]">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                        <g><path d="M12 1.75C6.34 1.75 1.75 6.34 1.75 12S6.34 22.25 12 22.25 22.25 17.66 22.25 12 17.66 1.75 12 1.75zm0 18.5c-3.584 0-6.5-2.916-6.5-6.5s2.916-6.5 6.5-6.5 6.5 2.916 6.5 6.5-2.916 6.5-6.5 6.5zM12.5 12V7h-1v6l4.25 2.125.5-.875L12.5 12z"/></g>
+                    </svg>
+                    <span>Everyone can reply</span>
+                </div>
+            )}
 
             <div className="flex items-center justify-between mt-1 pt-2 border-t border-[#2f3336]">
                 <div className="flex items-center gap-0.5">
@@ -277,7 +289,7 @@ const PostForm = ({ onSuccess, placeholder = "What is happening?", showClose, on
                     disabled={!canPost}
                     onClick={handlePost}
                     className={`rounded-full font-bold text-[15px] px-4 py-1.5 h-auto transition-all duration-200 ${
-                    canPost ? "bg-[#1d9bf0] hover:bg-[#1a8cd8] text-white" : "bg-[#1d9bf0]/50 text-white/50 cursor-not-allowed"
+                    canPost ? "bg-white text-black hover:bg-white/90 cursor-pointer" : "bg-white/50 text-black/50 cursor-not-allowed"
                     }`}
                 >
                     {isUploading || mutation.isPending ? <Loader2 className="animate-spin" size={18} /> : "Post"}
@@ -289,7 +301,14 @@ const PostForm = ({ onSuccess, placeholder = "What is happening?", showClose, on
 
         {showEmojiPicker && (
             <div 
-            className="fixed z-50 shadow-2xl rounded-2xl overflow-hidden"
+            ref={emojiPickerRef}
+            className="fixed z-50 shadow-2xl rounded-2xl overflow-hidden outline-none"
+            tabIndex={0}
+            onBlur={(e) => {
+                if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                    setShowEmojiPicker(false);
+                }
+            }}
             style={{ 
                 top: emojiBtnRef.current ? emojiBtnRef.current.getBoundingClientRect().bottom + 10 : 0, 
                 left: emojiBtnRef.current ? emojiBtnRef.current.getBoundingClientRect().left : 0 

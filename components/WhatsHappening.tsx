@@ -2,6 +2,7 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import HappeningCard from "./HappeningCard";
+import Link from "next/link";
 
 const WhatsHappening = () => {
   return (
@@ -17,11 +18,11 @@ const WhatsHappening = () => {
             <HappeningCard title="Startups · Trending" subject="#OpenSource" />
             <HappeningCard title="Devices · Trending" subject="#Pixel" />
 
-            <div className="flex justify-start hover:bg-gray-100/4 w-full p-3 cursor-pointer">
+            <Link href="/explore" className="flex justify-start hover:bg-gray-100/4 w-full p-3 cursor-pointer">
               <div className="flex justify-start">
                 <p className=" font-semibold text-blue-600">Show more</p>
               </div>
-            </div>
+            </Link>
           </div>
         </CardContent>
       </Card>

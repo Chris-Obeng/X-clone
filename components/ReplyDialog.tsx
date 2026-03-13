@@ -104,7 +104,7 @@ const ReplyDialog = ({ isOpen, onClose, post }: ReplyDialogProps) => {
                             onClick={handleReply}
                             disabled={!text.trim() || mutation.isPending}
                             className={`rounded-full font-bold px-4 py-1.5 h-auto transition-all ${
-                                text.trim() ? "bg-[#1d9bf0] hover:bg-[#1a8cd8] text-white" : "bg-[#1d9bf0]/50 text-white/50 cursor-not-allowed"
+                                text.trim() ? "bg-white text-black hover:bg-white/90 cursor-pointer" : "bg-white/50 text-black/50 cursor-not-allowed"
                             }`}
                         >
                             {mutation.isPending ? <Loader2 className="animate-spin" size={18} /> : "Reply"}

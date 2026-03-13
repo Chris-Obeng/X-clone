@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getPostsAction, deletePostAction } from '@/actions/post.actions';
+import { getPostsAction, getUserPostsAction, deletePostAction, searchPostsAction } from '@/actions/post.actions';
 import { formatDistanceToNow } from 'date-fns';
 import { MessageCircle, Repeat2, Heart, BarChart2, Bookmark, Share, Ellipsis, Trash2, Loader2 } from 'lucide-react';
 import { Grok } from "@lobehub/icons";
@@ -11,15 +11,19 @@ import ReplyDialog from './ReplyDialog';
 import MediaGrid from './MediaGrid';
 import { useUser } from '@clerk/nextjs';
 
-const Tweets = () => {
+const Tweets = ({ userId, searchQuery }: { userId?: string, searchQuery?: string }) => {
     const { user } = useUser();
     const queryClient = useQueryClient();
     const [replyPost, setReplyPost] = useState<any>(null);
     const [showDeleteMenu, setShowDeleteMenu] = useState<string | null>(null);
 
     const { data: posts } = useSuspenseQuery({
-        queryKey: ["posts"],
-        queryFn: async () => await getPostsAction(),
+        queryKey: searchQuery ? ["posts", "search", searchQuery] : userId ? ["posts", userId] : ["posts"],
+        queryFn: async () => {
+            if (searchQuery) return await searchPostsAction(searchQuery);
+            if (userId) return await getUserPostsAction(userId);
+            return await getPostsAction();
+        },
     });
 
     const deleteMutation = useMutation({
@@ -47,20 +51,32 @@ const Tweets = () => {
                         className='flex flex-row p-4 hover:bg-white/5 transition-colors cursor-pointer'
                     >
                         {/* Profile avatar */}
-                        <div className='mr-3 shrink-0'>
-                            <img 
-                                src={post.user?.profileImage || "/default-avatar.png"} 
-                                alt={post.user?.name || "User"} 
-                                className='w-10 h-10 rounded-full object-cover' 
-                            />
+                        <div className='mr-3 shrink-0 relative z-10'>
+                            <Link 
+                                href={`/profile/${post.user?.clerkId}`}
+                                onClick={(e) => e.stopPropagation()}
+                                className="block"
+                            >
+                                <img 
+                                    src={post.user?.profileImage || "/default-avatar.png"} 
+                                    alt={post.user?.name || "User"} 
+                                    className='w-10 h-10 rounded-full object-cover hover:brightness-90 transition-all' 
+                                />
+                            </Link>
                         </div>
 
                         {/* Content */}
                         <div className='flex flex-col flex-1 pb-1 min-w-0'>
                             <div className='flex items-center justify-between'>
-                                <div className='flex items-center text-[15px] whitespace-nowrap overflow-hidden text-ellipsis gap-1'>
-                                    <span className='font-bold text-[#e7e9ea] hover:underline shrink-0'>{post.user?.name}</span>
-                                    <span className='text-[#71767b] overflow-hidden text-ellipsis'>@{post.user?.username}</span>
+                                <div className='flex items-center text-[15px] whitespace-nowrap overflow-hidden text-ellipsis gap-1 relative z-10'>
+                                    <Link 
+                                        href={`/profile/${post.user?.clerkId}`}
+                                        onClick={(e) => e.stopPropagation()}
+                                        className="flex items-center gap-1 min-w-0 overflow-hidden"
+                                    >
+                                        <span className='font-bold text-[#e7e9ea] hover:underline shrink-0 truncate'>{post.user?.name}</span>
+                                        <span className='text-[#71767b] truncate'>@{post.user?.username}</span>
+                                    </Link>
                                     <span className='text-[#71767b]'>·</span>
                                     <span className='text-[#71767b] hover:underline shrink-0'>
                                         {formatDistanceToNow(new Date(post.createdAt))}
@@ -72,7 +88,14 @@ const Tweets = () => {
                                         <Grok size={16} />
                                     </div>
                                     <div 
-                                        className='text-[#71767b] hover:bg-[#1d9bf0]/10 hover:text-[#1d9bf0] p-1.5 rounded-full transition-colors cursor-pointer group'
+                                        className='text-[#71767b] hover:bg-[#1d9bf0]/10 hover:text-[#1d9bf0] p-1.5 rounded-full transition-colors cursor-pointer group outline-none focus:outline-none'
+                                        tabIndex={0}
+                                        onBlur={(e) => {
+                                            // Only close if focus is moving outside this container
+                                            if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                                                setShowDeleteMenu(null);
+                                            }
+                                        }}
                                         onClick={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
@@ -91,7 +114,7 @@ const Tweets = () => {
                                                             await deleteMutation.mutateAsync(post.id);
                                                         }
                                                     }}
-                                                    className='w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 text-[#f4212e] font-bold transition-colors text-sm'
+                                                    className='w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 text-[#f4212e] font-bold transition-colors text-sm cursor-pointer'
                                                 >
                                                     {deleteMutation.isPending ? <Loader2 className='animate-spin' size={16} /> : <Trash2 size={16} />}
                                                     Delete

@@ -32,3 +32,41 @@ export async function syncUserAction() {
     return null;
   }
 }
+
+export async function getUserProfileAction(clerkId: string) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { clerkId },
+      include: {
+        _count: {
+          select: { posts: true }
+        }
+      }
+    });
+
+    return user;
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    return null;
+  }
+}
+
+export async function updateUserProfileAction(data: { name: string; bio: string | null }) {
+  try {
+    const user = await currentUser();
+    if (!user) throw new Error("Unauthorized");
+
+    const updatedUser = await prisma.user.update({
+      where: { clerkId: user.id },
+      data: {
+        name: data.name,
+        bio: data.bio,
+      },
+    });
+
+    return updatedUser;
+  } catch (error) {
+    console.error("Error updating user profile:", error);
+    throw error;
+  }
+}
