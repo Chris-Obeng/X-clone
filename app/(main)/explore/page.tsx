@@ -16,7 +16,9 @@ const ExplorePage = async ({ searchParams }: ExplorePageProps) => {
       {/* Search Header for Mobile/Explore Only */}
       <div className="sticky top-0 z-20 bg-black/70 backdrop-blur-md px-4 py-2 flex items-center gap-4">
         <div className="flex-1">
-          <SearchBar />
+          <Suspense fallback={<div className="h-10 w-full bg-gray-200/5 rounded-full animate-pulse" />}>
+            <SearchBar />
+          </Suspense>
         </div>
         <button className="p-2 hover:bg-white/10 rounded-full transition-colors">
           <Settings size={20} />
