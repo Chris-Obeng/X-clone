@@ -26,14 +26,6 @@ const Tweets = ({ userId, searchQuery }: { userId?: string, searchQuery?: string
         },
     });
 
-    if (isLoading) {
-        return (
-            <div className="flex justify-center p-8">
-                <Loader2 className="animate-spin h-8 w-8 text-[#1d9bf0]" />
-            </div>
-        );
-    }
-
     const deleteMutation = useMutation({
         mutationFn: deletePostAction,
         onSuccess: () => {
@@ -41,6 +33,14 @@ const Tweets = ({ userId, searchQuery }: { userId?: string, searchQuery?: string
             setShowDeleteMenu(null);
         },
     });
+
+    if (isLoading) {
+        return (
+            <div className="flex justify-center p-8">
+                <Loader2 className="animate-spin h-8 w-8 text-[#1d9bf0]" />
+            </div>
+        );
+    }
 
     if (!posts || posts.length === 0) {
         return (
