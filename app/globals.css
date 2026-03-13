@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "uploadthing/tw/v4";
+@source "../node_modules/@uploadthing/react/dist";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
@@ -126,4 +128,57 @@
   html {
     @apply font-sans;
   }
+}
+
+/* Hide scrollbars for sidebars but keep functionality */
+aside::-webkit-scrollbar {
+  display: none;
+}
+aside {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+   Emoji Picker Customizations 
+   ──────────────────────────────────────────────────────────────────────── */
+
+.EmojiPickerReact {
+  /* Thin custom scrollbar */
+  --epr-scrollbar-width: 6px;
+  --epr-scrollbar-color: #3e4144;      /* X.com-like grey scrollbar */
+  --epr-bg-color: #000000;             /* Pure black to match X's modal background */
+  --epr-category-label-bg-color: rgba(0,0,0,0.8); /* Semi transparent black for sticky headers */
+  --epr-category-label-text-color: #71767b;
+  --epr-category-icon-active-color: #1d9bf0;
+  --epr-border-color: #2f3336;
+  --epr-search-input-bg-color: #202327;
+  border-radius: 16px !important;
+  border: 1px solid var(--epr-border-color) !important;
+}
+
+/* Base Webkit scrollbar for the picker container */
+.EmojiPickerReact .epr-body::-webkit-scrollbar {
+  width: var(--epr-scrollbar-width) !important;
+  background-color: transparent !important;
+}
+
+.EmojiPickerReact .epr-body::-webkit-scrollbar-thumb {
+  background-color: var(--epr-scrollbar-color) !important;
+  border-radius: 9999px !important;
+  /* Add a tiny invisible border so the thumb doesn't touch the walls */
+  border: 2px solid transparent !important;
+  background-clip: padding-box !important;
+}
+
+.EmojiPickerReact .epr-body::-webkit-scrollbar-thumb:hover {
+  background-color: #536471 !important;
 }

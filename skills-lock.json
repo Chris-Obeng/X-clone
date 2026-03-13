@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "uploadthing-nextjs": {
+      "source": "flohhhhh/skills",
+      "sourceType": "github",
+      "computedHash": "67fd58c0b7447459b4cd399f6f61de306725fbb80822a3fb7d2304b093d9edc9"
+    }
+  }
+}
