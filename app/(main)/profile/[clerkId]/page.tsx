@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { currentUser } from "@clerk/nextjs/server";
 import { getUserProfileAction } from "@/actions/user.actions";
 import { notFound } from "next/navigation";

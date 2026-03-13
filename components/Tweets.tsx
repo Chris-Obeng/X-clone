@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getPostsAction, getUserPostsAction, deletePostAction, searchPostsAction } from '@/actions/post.actions';
 import { formatDistanceToNow } from 'date-fns';
 import { MessageCircle, Repeat2, Heart, BarChart2, Bookmark, Share, Ellipsis, Trash2, Loader2 } from 'lucide-react';
@@ -17,7 +17,7 @@ const Tweets = ({ userId, searchQuery }: { userId?: string, searchQuery?: string
     const [replyPost, setReplyPost] = useState<any>(null);
     const [showDeleteMenu, setShowDeleteMenu] = useState<string | null>(null);
 
-    const { data: posts } = useSuspenseQuery({
+    const { data: posts, isLoading } = useQuery({
         queryKey: searchQuery ? ["posts", "search", searchQuery] : userId ? ["posts", userId] : ["posts"],
         queryFn: async () => {
             if (searchQuery) return await searchPostsAction(searchQuery);
@@ -25,6 +25,14 @@ const Tweets = ({ userId, searchQuery }: { userId?: string, searchQuery?: string
             return await getPostsAction();
         },
     });
+
+    if (isLoading) {
+        return (
+            <div className="flex justify-center p-8">
+                <Loader2 className="animate-spin h-8 w-8 text-[#1d9bf0]" />
+            </div>
+        );
+    }
 
     const deleteMutation = useMutation({
         mutationFn: deletePostAction,

@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import CreatePost from "@/components/CreatePost";
 import HomeHeader from "@/components/HomeHeader";
 import Tweets from "@/components/Tweets";

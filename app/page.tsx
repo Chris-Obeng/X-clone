@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle, faXTwitter } from "@fortawesome/free-brands-svg-icons";
 import { Home } from "lucide-react";
