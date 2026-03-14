@@ -10,9 +10,12 @@ import { Grok } from "@lobehub/icons";
 import ReplyDialog from './ReplyDialog';
 import MediaGrid from './MediaGrid';
 import { useUser } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 const Tweets = ({ userId, searchQuery }: { userId?: string, searchQuery?: string }) => {
     const { user } = useUser();
+    const router = useRouter();
     const queryClient = useQueryClient();
     const [replyPost, setReplyPost] = useState<any>(null);
     const [showDeleteMenu, setShowDeleteMenu] = useState<string | null>(null);
@@ -53,11 +56,12 @@ const Tweets = ({ userId, searchQuery }: { userId?: string, searchQuery?: string
     return (
         <div className='flex flex-col'>
             {posts.map((post) => (
-                <div key={post.id} className="relative border-b border-[#2f3336]">
-                    <Link 
-                        href={`/home/${post.id}`} 
-                        className='flex flex-row p-4 hover:bg-white/5 transition-colors cursor-pointer'
-                    >
+                <div 
+                    key={post.id} 
+                    className="relative border-b border-[#2f3336] hover:bg-white/5 transition-colors cursor-pointer group/card"
+                    onClick={() => router.push(`/home/${post.id}`)}
+                >
+                    <div className='flex flex-row p-4'>
                         {/* Profile avatar */}
                         <div className='mr-3 shrink-0 relative z-10'>
                             <Link 
@@ -83,6 +87,7 @@ const Tweets = ({ userId, searchQuery }: { userId?: string, searchQuery?: string
                                         className="flex items-center gap-1 min-w-0 overflow-hidden"
                                     >
                                         <span className='font-bold text-[#e7e9ea] hover:underline shrink-0 truncate'>{post.user?.name}</span>
+                                        <Image src="/Twitter_Verified_Badge.png" alt="verified" width={16} height={16} className="shrink-0" />
                                         <span className='text-[#71767b] truncate'>@{post.user?.username}</span>
                                     </Link>
                                     <span className='text-[#71767b]'>·</span>
@@ -198,7 +203,7 @@ const Tweets = ({ userId, searchQuery }: { userId?: string, searchQuery?: string
                                 </div>
                             </div>
                         </div>
-                    </Link>
+                    </div>
                 </div>
             ))}
 

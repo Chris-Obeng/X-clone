@@ -27,7 +27,7 @@ const FollowAccoutCard = ({ name, username, image }: FollowAccoutCardProps) => {
             <div className="flex items-center gap-1 text-nowrap">
               <h3 className="font-bold">{name}</h3>
               <Image
-                src="/Twitter_verified_badge.png"
+                src="/Twitter_Verified_Badge.png"
                 alt="verified"
                 width={16}
                 height={16}

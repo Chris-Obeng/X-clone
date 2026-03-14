@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { currentUser } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { getUserProfileAction } from "@/actions/user.actions";
 import { notFound } from "next/navigation";
 import ProfileView from "@/components/ProfileView";
@@ -11,8 +11,8 @@ interface PageProps {
 
 const ProfilePage = async ({ params }: PageProps) => {
   const { clerkId } = await params;
-  const loggedInUser = await currentUser();
-  const isOwnProfile = loggedInUser?.id === clerkId;
+  const { userId } = await auth();
+  const isOwnProfile = userId === clerkId;
 
   const user = await getUserProfileAction(clerkId);
   if (!user) {

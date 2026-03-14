@@ -10,6 +10,7 @@ import { EditProfileModal } from "./EditProfileModal";
 import { TweetSkeleton } from "./TweetSkeleton";
 import Tweets from "./Tweets";
 import { Suspense } from "react";
+import Image from "next/image";
 
 interface ProfileViewProps {
   clerkId: string;
@@ -76,7 +77,10 @@ export default function ProfileView({ clerkId, isOwnProfile, initialData }: Prof
 
         {/* User Details */}
         <div className="mt-8">
-          <h2 className="text-xl font-bold leading-tight">{user.name}</h2>
+          <div className="flex items-center gap-1 leading-tight">
+            <h2 className="text-xl font-bold">{user.name}</h2>
+            <Image src="/Twitter_Verified_Badge.png" alt="verified" width={18} height={18} />
+          </div>
           <span className="text-[#71767b]">@{user.username}</span>
           
           {user.bio && (

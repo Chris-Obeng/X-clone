@@ -13,6 +13,7 @@ import { createReplyAction } from "@/actions/reply.actions"
 import { Button } from "@/components/ui/button"
 import { Loader2, X } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
+import NextImage from "next/image"
 
 interface ReplyDialogProps {
     isOpen: boolean;
@@ -72,6 +73,7 @@ const ReplyDialog = ({ isOpen, onClose, post }: ReplyDialogProps) => {
                         <div className="flex flex-col flex-1 pb-4">
                             <div className="flex items-center gap-1">
                                 <span className="font-bold text-white">{post.user?.name}</span>
+                                <NextImage src="/Twitter_Verified_Badge.png" alt="verified" width={16} height={16} />
                                 <span className="text-[#71767b]">@{post.user?.username}</span>
                                 <span className="text-[#71767b]">·</span>
                                 <span className="text-[#71767b]">{formatDistanceToNow(new Date(post.createdAt))}</span>

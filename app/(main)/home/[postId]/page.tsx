@@ -8,6 +8,7 @@ import { format } from 'date-fns';
 import { Loader2, MessageCircle, Repeat2, Heart, Share, Bookmark, BarChart2 } from 'lucide-react';
 import CreateReply from '@/components/CreateReply';
 import MediaGrid from '@/components/MediaGrid';
+import NextImage from "next/image";
 
 export default function PostPage({ params }: { params: Promise<{ postId: string }> }) {
   const unwrappedParams = React.use(params);
@@ -48,7 +49,10 @@ export default function PostPage({ params }: { params: Promise<{ postId: string 
               className='w-11 h-11 rounded-full object-cover mr-3' 
             />
             <div className="flex flex-col">
-              <span className='font-bold text-[#e7e9ea] hover:underline cursor-pointer leading-5'>{post.user?.name}</span>
+              <div className="flex items-center gap-1">
+                <span className='font-bold text-[#e7e9ea] hover:underline cursor-pointer leading-5'>{post.user?.name}</span>
+                <NextImage src="/Twitter_Verified_Badge.png" alt="verified" width={16} height={16} />
+              </div>
               <span className='text-[#71767b] text-[15px]'>@{post.user?.username}</span>
             </div>
           </div>
